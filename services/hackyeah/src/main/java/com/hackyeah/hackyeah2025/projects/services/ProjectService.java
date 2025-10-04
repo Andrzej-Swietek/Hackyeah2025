@@ -17,4 +17,5 @@ public interface ProjectService {
     List<Project> getAllProjects();
     void deleteProject(Long id);
     PaginatedResponse<Project> getProjects(int page, int size);
+    Optional<Project> addParticipant(Long id, String participantId);
 }

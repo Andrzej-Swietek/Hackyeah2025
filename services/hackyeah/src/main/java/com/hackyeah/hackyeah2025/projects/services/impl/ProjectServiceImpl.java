@@ -100,4 +100,19 @@ public class ProjectServiceImpl implements ProjectService {
                 .data(projectPage.getContent())
                 .build();
     }
+
+    @Override
+    @Transactional
+    public Optional<Project> addParticipant(Long id, String participantId) {
+        Optional<Project> projectOpt = projectRepository.findById(id);
+        projectOpt.ifPresent(project -> {
+            List<String> participants = project.getParticipants();
+            if (!participants.contains(participantId)) {
+                participants.add(participantId);
+                project.setParticipants(participants);
+                projectRepository.save(project);
+            }
+        });
+        return projectOpt;
+    }
 }

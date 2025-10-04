@@ -54,6 +54,16 @@ public class ProjectController {
     ) {
         return ResponseEntity.ok(projectService.updateProject(id, request));
     }
+    
+    @PatchMapping("/{id}/add-participant")
+    public ResponseEntity<Project> addParticipant(
+            @PathVariable Long id,
+            @RequestParam String participantId
+    ) {
+        return projectService.addParticipant(id, participantId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
