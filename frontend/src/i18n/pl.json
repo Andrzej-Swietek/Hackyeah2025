@@ -32,7 +32,8 @@
     "settings": "Ustawienia",
     "help": "Pomoc",
     "signOut": "Wyloguj",
-    "signIn": "Zaloguj"
+    "signIn": "Zaloguj",
+    "signUp": "Zarejestruj"
   },
   "taskDetails": {
     "statusValues": {

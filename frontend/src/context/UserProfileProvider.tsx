@@ -36,9 +36,9 @@ export const UserProfileProvider: FC<UserProfileProviderProps> = ({ children }) 
 
   const syncToken = () => {
     if (keycloak.token) {
-      localStorage.setItem('kanban_app_token', keycloak.token);
+      localStorage.setItem('travel_app_token', keycloak.token);
     } else {
-      localStorage.removeItem('kanban_app_token');
+      localStorage.removeItem('travel_app_token');
     }
   };
 
@@ -49,7 +49,7 @@ export const UserProfileProvider: FC<UserProfileProviderProps> = ({ children }) 
       try {
         const api = UserControllerApiFactory();
         const response = await api.getUserDetails(keycloak?.tokenParsed?.sub ?? '');
-        localStorage.setItem('kanban_app_token', keycloak.token);
+        localStorage.setItem('travel_app_token', keycloak.token);
         setProfile(response.data);
         setError(null);
       } catch (err) {
@@ -68,13 +68,13 @@ export const UserProfileProvider: FC<UserProfileProviderProps> = ({ children }) 
     }, 60000);
     fetchProfile();
     keycloak.onTokenExpired = () => {
-      localStorage.removeItem('kanban_app_token');
+      localStorage.removeItem('travel_app_token');
       keycloak.updateToken();
       // Keycloak.logout();
     };
 
     keycloak.onTokenExpired = async () => {
-      localStorage.removeItem('kanban_app_token');
+      localStorage.removeItem('travel_app_token');
       try {
         await keycloak.updateToken();
       } catch {
@@ -85,7 +85,7 @@ export const UserProfileProvider: FC<UserProfileProviderProps> = ({ children }) 
     keycloak.onAuthRefreshSuccess = syncToken;
 
     keycloak.onAuthLogout = () => {
-      localStorage.removeItem('kanban_app_token');
+      localStorage.removeItem('travel_app_token');
     };
     return () => clearInterval(interval);
   }, [keycloak]);

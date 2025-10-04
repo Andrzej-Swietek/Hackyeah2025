@@ -7,6 +7,7 @@ import { Home } from '@routes/Home.tsx';
 import { Login } from '@routes/auth/Login.tsx';
 import { MainLayout } from '@layouts/MainLayout.tsx';
 import { Register } from '@routes/auth/Register.tsx';
+import { TripEditor} from "@routes/TripEditor/TripEditor.tsx";
 import { UserProfileTab } from '@routes/user/UserProfile.tsx';
 import { Reports } from '@routes/user/Reports.tsx';
 import { Settings } from '@routes/settings/Settings.tsx';
@@ -33,10 +34,10 @@ const router = createBrowserRouter([
         path: 'about',
         element: <About />,
       },
-      {
-        path: 'alerts',
-        element: <Alerts />,
-      },
+      // {
+      //   path: 'alerts',
+      //   element: <Alerts />,
+      // },
       {
         path: 'auth',
         element: <Outlet />,
@@ -49,12 +50,16 @@ const router = createBrowserRouter([
         path: 'user',
         element: <Outlet />,
         children: [
-          { path: 'my-profile', element: <UserProfileTab /> },
-          { path: 'reports', element: <Reports /> },
-          { path: 'settings', element: <Settings /> },
+          // { path: 'my-profile', element: <UserProfileTab /> },
+          // { path: 'reports', element: <Reports /> },
+          // { path: 'settings', element: <Settings /> },
         ],
       },
-      { path: 'management/labels', element: <LabelsManagement /> },
+      {
+        path: 'trip-editor',
+        element: <TripEditor />,
+      },
+      // { path: 'management/labels', element: <LabelsManagement /> },
     ],
   },
 ]);
