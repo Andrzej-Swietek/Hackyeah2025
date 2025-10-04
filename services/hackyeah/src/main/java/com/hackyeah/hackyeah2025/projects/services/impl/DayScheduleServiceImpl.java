@@ -5,6 +5,7 @@ import com.hackyeah.hackyeah2025.projects.entities.ScheduleEntry;
 import com.hackyeah.hackyeah2025.projects.entities.Site;
 import com.hackyeah.hackyeah2025.projects.repositories.AccommodationRepository;
 import com.hackyeah.hackyeah2025.projects.repositories.DayScheduleRepository;
+import com.hackyeah.hackyeah2025.projects.repositories.ProjectRepository;
 import com.hackyeah.hackyeah2025.projects.requests.DayScheduleRequest;
 import com.hackyeah.hackyeah2025.projects.requests.SiteRequest;
 import com.hackyeah.hackyeah2025.projects.services.DayScheduleService;
@@ -24,10 +25,13 @@ import java.util.stream.Collectors;
 public class DayScheduleServiceImpl implements DayScheduleService {
     private final DayScheduleRepository repository;
     private final AccommodationRepository accommodationRepository;
+    private final ProjectRepository projectRepository;
 
     @Override
     @Transactional
     public DaySchedule create(DayScheduleRequest request) {
+        var project = projectRepository.findById(request.projectId())
+                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
 
         var accommodation = accommodationRepository.findById(request.accommodationId())
                 .orElseThrow(() -> new IllegalArgumentException("Accommodation not found"));
@@ -58,6 +62,9 @@ public class DayScheduleServiceImpl implements DayScheduleService {
                 .accommodation(accommodation)
                 .scheduleEntries(entries)
                 .build();
+
+        project.getPlan().add(daySchedule);
+        projectRepository.save(project);
 
         return repository.save(daySchedule);
     }

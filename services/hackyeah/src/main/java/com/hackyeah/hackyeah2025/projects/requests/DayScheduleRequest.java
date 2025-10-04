@@ -6,5 +6,6 @@ import java.util.List;
 public record DayScheduleRequest(
         Date date,
         Long accommodationId,
-        List<ScheduleEntryRequest> scheduleEntries
+        List<ScheduleEntryRequest> scheduleEntries,
+        Long projectId
 ) {}
