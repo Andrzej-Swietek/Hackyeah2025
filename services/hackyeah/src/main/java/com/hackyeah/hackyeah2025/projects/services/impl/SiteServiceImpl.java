@@ -43,6 +43,23 @@ public class SiteServiceImpl implements SiteService {
     }
 
     @Override
+    public Site updateSite(Long id, CreateSiteRequest site) {
+        Site existingSite = siteRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Site not found with id " + id));
+
+        existingSite.setName(site.name());
+        existingSite.setDescription(site.description());
+        existingSite.setTimeEstimateHours(site.timeEstimateHours());
+        existingSite.setCostEstimate(site.costEstimate());
+        existingSite.setAddress(site.address());
+        existingSite.setLink(site.link());
+        existingSite.setPhotosPaths(site.photosPaths());
+        existingSite.setGeolocation(site.geolocation());
+
+        return siteRepository.save(existingSite);
+    }
+
+    @Override
     public void deleteSite(Long id) {
         siteRepository.deleteById(id);
     }

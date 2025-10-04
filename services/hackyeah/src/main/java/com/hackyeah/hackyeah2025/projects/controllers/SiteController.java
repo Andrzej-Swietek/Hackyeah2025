@@ -36,6 +36,15 @@ public class SiteController {
                 .body(createdSite);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Site> updateSite(
+            @PathVariable Long id,
+            @Valid @RequestBody CreateSiteRequest request
+    ) {
+        Site updatedSite = siteService.updateSite(id, request);
+        return ResponseEntity.ok(updatedSite);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Site> getSiteById(@PathVariable Long id) {
         return siteService.getSiteById(id)
