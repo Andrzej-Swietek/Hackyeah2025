@@ -53,7 +53,7 @@ export const Settings: FC = () => {
         </div>
 
         {/* Content */}
-        <div className="flex flex-col items-center justify-center min-h-[70vh] py-12">
+        <div className="flex flex-col items-center justify-center min-h-[75vh] py-12">
           <Card className="w-full lg:w-[80%] shadow-lg rounded-2xl">
             <CardHeader>
               <CardTitle className="text-2xl">{t('settings.title')}</CardTitle>

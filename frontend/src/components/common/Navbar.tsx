@@ -45,22 +45,25 @@ export const Navbar: FC<NavbarProps> = () => {
                             {t('navbar.explore')}
                         </NavLink>
                         <NavLink
-                            to="/user/my-projects"
+                            to="/project-editor"
                             className="text-md font-medium text-muted-foreground transition-colors hover:text-foreground"
                         >
-                            {t('navbar.myProjects')}
+                            {t('navbar.newProject')}
                         </NavLink>
+                        {profile && (
+                            <NavLink
+                                to="/user/my-projects"
+                                className="text-md font-medium text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                                {t('navbar.myProjects')}
+                            </NavLink>
+                            )
+                        }
                         <NavLink
                             to="/community"
                             className="text-md font-medium text-muted-foreground transition-colors hover:text-foreground"
                         >
                             {t('navbar.community')}
-                        </NavLink>
-                        <NavLink
-                            to="/project-editor"
-                            className="text-md font-medium text-muted-foreground transition-colors hover:text-foreground"
-                        >
-                            {t('navbar.newProject')}
                         </NavLink>
                         <NavLink
                             to="/about"
@@ -122,11 +125,12 @@ export const Navbar: FC<NavbarProps> = () => {
                         )
                         : (
                             <div className="flex items-center gap-4">
+                                <User className="h-6 w-6"/>
                                 <NavLink
                                     to="/auth/login"
                                     className="flex items-center gap-2 text-md font-medium text-muted-foreground hover:text-foreground"
                                 >
-                                    <User className="h-8 w-8"/> {t("navbar.signIn")}
+                                    {t("navbar.signIn")}
                                 </NavLink>
                                 <NavLink
                                     to="/auth/register"
