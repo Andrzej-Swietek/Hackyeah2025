@@ -5,8 +5,8 @@ import com.hackyeah.hackyeah2025.projects.entities.ScheduleEntry;
 import com.hackyeah.hackyeah2025.projects.entities.Site;
 import com.hackyeah.hackyeah2025.projects.repositories.AccommodationRepository;
 import com.hackyeah.hackyeah2025.projects.repositories.DayScheduleRepository;
+import com.hackyeah.hackyeah2025.projects.requests.CreateSiteRequest;
 import com.hackyeah.hackyeah2025.projects.requests.DayScheduleRequest;
-import com.hackyeah.hackyeah2025.projects.requests.SiteRequest;
 import com.hackyeah.hackyeah2025.projects.services.DayScheduleService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +83,7 @@ public class DayScheduleServiceImpl implements DayScheduleService {
 
         List<ScheduleEntry> entries = request.scheduleEntries().stream()
                 .map(entryReq -> {
-                    SiteRequest siteReq = entryReq.site();
+                    CreateSiteRequest siteReq = entryReq.site();
                     Site site = Site.builder()
                             .name(siteReq.name())
                             .description(siteReq.description())
