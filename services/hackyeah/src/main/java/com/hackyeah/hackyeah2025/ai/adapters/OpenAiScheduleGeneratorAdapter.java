@@ -1,45 +1,54 @@
-//package com.hackyeah.hackyeah2025.ai.adapters;
-//
-//import jakarta.persistence.EntityNotFoundException;
-//import lombok.RequiredArgsConstructor;
-//import lombok.extern.slf4j.Slf4j;
-//import org.springframework.ai.chat.client.ChatClient;
-//import org.springframework.ai.chat.prompt.Prompt;
-//import org.springframework.core.ParameterizedTypeReference;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//import pl.edu.agh.io_project.ai.TaskGenerationResponse;
-//import pl.edu.agh.io_project.ai.ports.AiTaskGeneratorPort;
-//import pl.edu.agh.io_project.ai.prompts.GenerateMultipleTasksLLMPrompt;
-//import pl.edu.agh.io_project.ai.prompts.GenerateTaskLLMPrompt;
-//import pl.edu.agh.io_project.boards.columns.BoardColumn;
-//import pl.edu.agh.io_project.boards.columns.BoardColumnRepository;
-//import pl.edu.agh.io_project.exceptions.AIFailureException;
-//import pl.edu.agh.io_project.tasks.Task;
-//import pl.edu.agh.io_project.tasks.TaskRepository;
-//import pl.edu.agh.io_project.tasks.TaskStatus;
-//import pl.edu.agh.io_project.tasks.estimate.Estimate;
-//import pl.edu.agh.io_project.tasks.estimate.EstimateRepository;
-//
-//import java.time.LocalDateTime;
-//import java.util.List;
-//import java.util.Optional;
-//import java.util.Set;
-//import java.util.stream.IntStream;
-//
-//@Slf4j
-//@Service
-//@RequiredArgsConstructor
-//public class OpenAiTaskGeneratorAdapter implements AiTaskGeneratorPort {
-//
-//    private final ChatClient chatClient;
-//    private final EstimateRepository estimateRepository;
-//    private final TaskRepository taskRepository;
-//    private final BoardColumnRepository boardColumnRepository;
-//
-//
-//    @Transactional
-//    @Override
+package com.hackyeah.hackyeah2025.ai.adapters;
+
+import com.hackyeah.hackyeah2025.ai.ports.AiScheduleGeneratorPort;
+import com.hackyeah.hackyeah2025.ai.prompts.GenerateAllProjectScheduleLLMPrompt;
+import com.hackyeah.hackyeah2025.ai.prompts.GenerateDaySchedule;
+import com.hackyeah.hackyeah2025.projects.entities.DaySchedule;
+import com.hackyeah.hackyeah2025.projects.entities.Project;
+import com.hackyeah.hackyeah2025.projects.requests.ProjectRequest;
+import com.hackyeah.hackyeah2025.projects.services.DayScheduleService;
+import com.hackyeah.hackyeah2025.projects.services.ProjectService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.IntStream;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class OpenAiScheduleGeneratorAdapter implements AiScheduleGeneratorPort {
+
+    private final ChatClient chatClient;
+    private final ProjectService projectService;
+    private final DayScheduleService dayScheduleService;
+
+    @Transactional
+    @Override
+    public Project generateScheduleForProjectProject(Project request) {
+        Prompt prompt = new GenerateAllProjectScheduleLLMPrompt(request).getPrompt();
+        log.info(prompt.toString());
+        return null;
+    }
+
+    @Override
+    public DaySchedule generateSingleScheduleEntry(Project request) {
+        Prompt prompt = new GenerateDaySchedule(request).getPrompt();
+        log.info(prompt.toString());
+        return null;
+    }
+}
+
 //    public Task generateTask(String taskDescription, Long columnId, int position) {
 //        BoardColumn boardColumn = boardColumnRepository.findById(columnId)
 //                .orElseThrow(() -> new EntityNotFoundException("Column with Id " + columnId + "not found"));
