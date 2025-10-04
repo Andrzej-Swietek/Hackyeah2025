@@ -3,6 +3,7 @@ package com.hackyeah.hackyeah2025.projects.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -42,5 +43,6 @@ public class Project {
     /**
      * List of participant keycloak identifiers that share right to project
      */
-    private List<String> participants;
+    @ElementCollection
+    private List<String> participants = new ArrayList<>();;
 }
