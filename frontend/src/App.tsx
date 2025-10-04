@@ -7,7 +7,7 @@ import { Home } from '@routes/Home.tsx';
 import { Login } from '@routes/auth/Login.tsx';
 import { MainLayout } from '@layouts/MainLayout.tsx';
 import { Register } from '@routes/auth/Register.tsx';
-import { TripEditor} from "@routes/TripEditor/TripEditor.tsx";
+import { ProjectEditor} from "@routes/ProjectEditor/ProjectEditor.tsx";
 import { UserProfileTab } from '@routes/user/UserProfile.tsx';
 import { Reports } from '@routes/user/Reports.tsx';
 import { Settings } from '@routes/settings/Settings.tsx';
@@ -57,7 +57,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'trip-editor',
-        element: <TripEditor />,
+        element: <ProjectEditor />,
       },
       // { path: 'management/labels', element: <LabelsManagement /> },
     ],
