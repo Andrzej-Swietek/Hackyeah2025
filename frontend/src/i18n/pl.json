@@ -28,12 +28,29 @@
   "navbar": {
     "logoLeft": "retro",
     "logoRight": "Board",
-    "myBoards": "Moje tablice",
+    "explore": "Odkrywaj",
+    "community": "Społeczność",
+    "newProject": "Nowy Projekt",
+    "about": "O Aplikacji",
+    "myProjects": "Moje projekty",
+    "reports": "Raporty",
     "settings": "Ustawienia",
     "help": "Pomoc",
     "signOut": "Wyloguj",
     "signIn": "Zaloguj",
     "signUp": "Zarejestruj"
+  },
+  "projectEditor": {
+    "header": "Zaplanuj Podróż Twoich Marzeń",
+    "subheader": "Twórz plany podróży na każdy dzień i dziel się swoimi przygodami ze znajomymi"
+  },
+  "userProfile": {
+    "header": "Profil użytkownika",
+    "username": "Nazwa użytkownika",
+    "fullName": "Imię i nazwisko",
+    "emailVerified": "Email zweryfikowany",
+    "accountActive": "Konto aktywne",
+    "created": "Utworzono"
   },
   "taskDetails": {
     "statusValues": {

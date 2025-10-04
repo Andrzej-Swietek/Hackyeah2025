@@ -5,12 +5,12 @@ export const Footer: FC = () => (
   <footer className="bg-black text-white !py-4 h-[80px] flex items-center justify-between !px-16">
     {/* Left - Brand */}
     <div className="flex flex-col">
-      <span className="text-sm font-semibold">retroBoard</span>
-      <span className="text-xs text-gray-400">Keep it simple. Keep it retro.</span>
+      <span className="text-sm font-semibold">TripFlow</span>
+      <span className="text-xs text-gray-400">Make Your travels easier</span>
     </div>
 
     {/* Center - Copyright */}
-    <div className="text-xs text-gray-400">© 2025 retroBoard All Rights Reserved.</div>
+    <div className="text-xs text-gray-400">© 2025 TripFlow All Rights Reserved.</div>
 
     {/* Right - Icon */}
     <div className="w-8 h-8 bg-white rounded flex items-center justify-center">

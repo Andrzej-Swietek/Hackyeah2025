@@ -9,6 +9,7 @@ import { MainLayout } from '@layouts/MainLayout.tsx';
 import { Register } from '@routes/auth/Register.tsx';
 import { ProjectEditor} from "@routes/ProjectEditor/ProjectEditor.tsx";
 import { UserProfileTab } from '@routes/user/UserProfile.tsx';
+import {UserProjects} from "@routes/user/UserProjects.tsx";
 import { Reports } from '@routes/user/Reports.tsx';
 import { Settings } from '@routes/settings/Settings.tsx';
 import { LabelsManagement } from '@routes/settings/labels/LabelsManagement.tsx';
@@ -50,13 +51,14 @@ const router = createBrowserRouter([
         path: 'user',
         element: <Outlet />,
         children: [
-          // { path: 'my-profile', element: <UserProfileTab /> },
+          { path: 'my-profile', element: <UserProfileTab /> },
+          { path: 'my-projects', element: <UserProjects /> },
           // { path: 'reports', element: <Reports /> },
-          // { path: 'settings', element: <Settings /> },
+          { path: 'settings', element: <Settings /> },
         ],
       },
       {
-        path: 'trip-editor',
+        path: 'project-editor',
         element: <ProjectEditor />,
       },
       // { path: 'management/labels', element: <LabelsManagement /> },

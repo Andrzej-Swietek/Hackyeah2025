@@ -1,9 +1,9 @@
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card } from "@/components/ui/card"
+import { Button } from "@components/ui/button.tsx"
+import { Input } from "@components/ui/input.tsx"
+import { Label } from "@components/ui/label.tsx"
+import { Textarea } from "@components/ui/textarea.tsx"
+import { Card } from "@components/ui/card.tsx"
 import { Plus, Clock, MapPin, Trash2, GripVertical } from "lucide-react"
 
 interface Activity {
@@ -95,7 +95,7 @@ export function DayPlanner() {
                         </button>
                     ))}
                 </div>
-                <Button onClick={addDay} size="sm" variant="outline" className="flex-shrink-0 bg-transparent">
+                <Button onClick={addDay} size="sm" variant="outline" className="flex-shrink-0 bg-transparent hover:!bg-primary">
                     <Plus className="h-4 w-4 mr-1" />
                     Add Day
                 </Button>

@@ -28,12 +28,29 @@
   "navbar": {
     "logoLeft": "retro",
     "logoRight": "Board",
-    "myBoards": "My Boards",
+    "explore": "Explore",
+    "community": "Community",
+    "newProject": "New Project",
+    "about": "About",
+    "myProjects": "My Projects",
+    "reports": "Reports",
     "settings": "Settings",
     "help": "Help",
     "signOut": "Sign out",
     "signIn": "Sign in",
     "signUp": "Get Started"
+  },
+  "projectEditor": {
+    "header": "Plan Your Perfect Trip",
+    "subheader": "Create day-by-day itineraries and share your adventures with friends"
+  },
+  "userProfile": {
+    "header": "User profile",
+    "username": "Username",
+    "fullName": "Full name",
+    "emailVerified": "Email verified",
+    "accountActive": "Account active",
+    "created": "Created"
   },
   "taskDetails": {
     "statusValues": {
