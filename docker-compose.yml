@@ -1,0 +1,62 @@
+services:
+  #  =================== Databases ===================
+
+  postgres:
+    container_name: hackyeah_pg_sql
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hackyeah-db
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - microservices-net
+    restart: unless-stopped
+
+  keycloak:
+    container_name: keycloak-ms
+    image: quay.io/keycloak/keycloak:latest
+    ports:
+      - 9098:8080
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://hackyeah_pg_sql/hackyeah-db
+      KC_DB_USERNAME: user
+      KC_DB_PASSWORD: password
+      KC_HEALTH_ENABLED: true
+      KC_METRICS_ENABLED: true
+      KC_HTTP_ENABLED: true
+    networks:
+      - microservices-net
+    volumes:
+      - ./config/keycloak/realm.json:/opt/keycloak/data/import/realm-export.json
+      - ./keycloak/theme:/opt/keycloak/providers/
+    command:
+      - "start-dev"
+      - "--import-realm"
+    healthcheck:
+      test: [ 'CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)new java.net.URL(args[0]).openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:8080/auth/health/live' ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+include:
+  - docker/monitoring/monitoring.yml
+
+#  ================== Networks ===================
+
+networks:
+  microservices-net:
+    driver: bridge
+
+#  =================== Volumes ===================
+
+volumes:
+  postgres:
+  pgadmin:

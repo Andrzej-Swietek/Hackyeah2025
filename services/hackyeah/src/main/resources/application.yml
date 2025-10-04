@@ -1,0 +1,104 @@
+spring:
+  application:
+    name: hackyeah
+  profiles:
+    active: local
+  ai:
+    openai:
+      #      enabled: false
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-3.5-turbo
+  threads:
+    virtual:
+      enabled: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: hackyeah-backend
+            client-secret: HmNltqvNvZdfg8yrw256Hq4pVkuFYgB0
+            authorization-grant-type: client_credentials
+            scope: openid,profile,email
+      provider:
+        keycloak:
+          token-uri: "http://localhost:9098/realms/hackyeah-project"
+      resourceserver:
+        jwt:
+          issuer-uri: "http://localhost:9098/realms/hackyeah-project"
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hackyeah-db
+    username: user #${DB_USERNAME}
+    password: password #${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-test-query: SELECT 1
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+storage:
+  local:
+    base-path: store/
+server:
+  port: 8080
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+    min-response-size: 1024
+
+
+logging:
+  level:
+    org.hibernate.SQL: ERROR
+    org.hibernate.type.descriptor.sql.BasicBinder: ERROR
+    #    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.boot.actuate: DEBUG
+    io.micrometer: DEBUG
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+    enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: [ "health", "info", "metrics", "prometheus" ]
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    enable:
+      all: true
+    tags:
+      application: hackyeah-project
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+        step: 30s
+
+keycloak:
+  server-url: http://localhost:9098
+  realm: hackyeah-project
+  client-id: hackyeah-backend
+  client-secret: HmNltqvNvZdfg8yrw256Hq4pVkuFYgB0
