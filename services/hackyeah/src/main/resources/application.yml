@@ -6,7 +6,7 @@ spring:
   ai:
     openai:
       #      enabled: false
-      api-key: ${OPENAI_API_KEY}
+      api-key: "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"
       chat:
         options:
           model: gpt-3.5-turbo
