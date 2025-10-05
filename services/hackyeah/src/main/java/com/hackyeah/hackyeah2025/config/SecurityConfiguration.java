@@ -30,6 +30,7 @@ public class SecurityConfiguration {
                         // .requestMatchers("/api/v1/admin").hasAuthority(Role.ADMIN.name())
                         // .requestMatchers("/api/v1/user").hasAuthority(Role.USER.name())
                         .anyRequest().authenticated()
+//                        .anyRequest().permitAll()
                 ).oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(
                                 jwt -> jwt.jwtAuthenticationConverter(new JwtToUserPrincipalConverter())
