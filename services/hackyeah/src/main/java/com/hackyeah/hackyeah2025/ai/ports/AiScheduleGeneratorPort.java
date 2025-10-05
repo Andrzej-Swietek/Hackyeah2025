@@ -2,10 +2,11 @@ package com.hackyeah.hackyeah2025.ai.ports;
 
 import com.hackyeah.hackyeah2025.projects.entities.DaySchedule;
 import com.hackyeah.hackyeah2025.projects.entities.Project;
-import com.hackyeah.hackyeah2025.projects.requests.DayScheduleRequest;
-import com.hackyeah.hackyeah2025.projects.requests.ProjectRequest;
+
+import java.util.Optional;
 
 public interface AiScheduleGeneratorPort {
-    Project generateScheduleForProjectProject(Project request);
-    DaySchedule generateSingleScheduleEntry(Project request);
+    Optional<Project> generateScheduleForProjectProject(Project request);
+
+    Optional<DaySchedule> generateSingleScheduleEntry(Project request);
 }

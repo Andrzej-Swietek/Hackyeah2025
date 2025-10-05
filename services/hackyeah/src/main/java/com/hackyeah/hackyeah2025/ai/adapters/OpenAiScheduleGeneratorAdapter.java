@@ -1,11 +1,14 @@
 package com.hackyeah.hackyeah2025.ai.adapters;
 
+import com.hackyeah.hackyeah2025.ai.ScheduleGenerationResponse;
 import com.hackyeah.hackyeah2025.ai.ports.AiScheduleGeneratorPort;
 import com.hackyeah.hackyeah2025.ai.prompts.GenerateAllProjectScheduleLLMPrompt;
 import com.hackyeah.hackyeah2025.ai.prompts.GenerateDaySchedule;
 import com.hackyeah.hackyeah2025.projects.entities.DaySchedule;
 import com.hackyeah.hackyeah2025.projects.entities.Project;
-import com.hackyeah.hackyeah2025.projects.requests.ProjectRequest;
+import com.hackyeah.hackyeah2025.projects.requests.DayScheduleRequest;
+import com.hackyeah.hackyeah2025.projects.requests.ScheduleEntryRequest;
+import com.hackyeah.hackyeah2025.projects.requests.SiteRequest;
 import com.hackyeah.hackyeah2025.projects.services.DayScheduleService;
 import com.hackyeah.hackyeah2025.projects.services.ProjectService;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,11 +20,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -33,109 +33,92 @@ public class OpenAiScheduleGeneratorAdapter implements AiScheduleGeneratorPort {
     private final ProjectService projectService;
     private final DayScheduleService dayScheduleService;
 
-    @Transactional
     @Override
-    public Project generateScheduleForProjectProject(Project request) {
-        Prompt prompt = new GenerateAllProjectScheduleLLMPrompt(request).getPrompt();
-        log.info(prompt.toString());
-        return null;
-    }
-
-    @Override
-    public DaySchedule generateSingleScheduleEntry(Project request) {
+    public Optional<DaySchedule> generateSingleScheduleEntry(Project request) {
         Prompt prompt = new GenerateDaySchedule(request).getPrompt();
         log.info(prompt.toString());
-        return null;
+        ScheduleGenerationResponse response = Optional.ofNullable(
+                chatClient.prompt(prompt)
+                        .call()
+                        .entity(ScheduleGenerationResponse.class)
+        ).orElseThrow(() -> new EntityNotFoundException("AI result Parsing failed"));
+
+        String rawResponse = chatClient.prompt(prompt).call().content();
+        log.info("AI raw response: {}", rawResponse);
+
+        try {
+            var responseDayScheduleEntries = response.getSchedule();
+            DayScheduleRequest dayScheduleRequest = new DayScheduleRequest(
+                    responseDayScheduleEntries.getFirst().getStartDate(),
+                    1L, // Accommodation ID - to be set properly later on in the generation  process
+                    responseDayScheduleEntries.stream().map(entry ->
+                            new ScheduleEntryRequest(
+                                    new SiteRequest(
+                                            entry.getSite().getName(),
+                                            entry.getSite().getDescription(),
+                                            entry.getSite().getTimeEstimateHours(),
+                                            entry.getSite().getCostEstimate(),
+                                            entry.getSite().getAddress(),
+                                            entry.getSite().getLink(),
+                                            entry.getSite().getPhotosPaths(),
+                                            entry.getSite().getGeolocation()
+                                    ),
+                                    entry.getStartDate()
+                            )
+                    ).toList(),
+                    request.getId()
+            );
+            return Optional.of(dayScheduleService.create(dayScheduleRequest));
+        } catch (Exception e) {
+            log.error("AI schedule generation failed", e);
+            return Optional.empty();
+        }
+    }
+
+    @Transactional
+    @Override
+    public Optional<Project> generateScheduleForProjectProject(Project request) {
+        Prompt prompt = new GenerateAllProjectScheduleLLMPrompt(request).getPrompt();
+        log.info(prompt.toString());
+        List<DaySchedule> response = Optional.ofNullable(
+                chatClient.prompt(prompt)
+                        .call()
+                        .entity(new ParameterizedTypeReference<List<DaySchedule>>() {
+                        })
+        ).orElseThrow(() -> new EntityNotFoundException("AI result Parsing failed"));
+
+        String rawResponse = chatClient.prompt(prompt).call().content();
+        log.info("AI raw response: {}", rawResponse);
+
+        try {
+            IntStream.range(0, response.size()).forEach(i -> {
+                DaySchedule daySchedule = response.get(i);
+                dayScheduleService.create(
+                        new DayScheduleRequest(
+                                daySchedule.getDate(),
+                                1L, // daySchedule.getAccommodation().getId(),
+                                daySchedule.getScheduleEntries().stream().map(entry ->
+                                        new ScheduleEntryRequest(
+                                                new SiteRequest(
+                                                        entry.getSite().getName(),
+                                                        entry.getSite().getDescription(),
+                                                        entry.getSite().getTimeEstimateHours(),
+                                                        entry.getSite().getCostEstimate(),
+                                                        entry.getSite().getAddress(),
+                                                        entry.getSite().getLink(),
+                                                        entry.getSite().getPhotosPaths(),
+                                                        entry.getSite().getGeolocation()
+                                                ),
+                                                entry.getStartDate()
+                                        )
+                                ).toList(),
+                                request.getId())
+                );
+            });
+            return projectService.getProjectById(request.getId());
+        } catch (Exception e) {
+            log.error("AI schedule generation failed", e);
+            return Optional.empty();
+        }
     }
 }
-
-//    public Task generateTask(String taskDescription, Long columnId, int position) {
-//        BoardColumn boardColumn = boardColumnRepository.findById(columnId)
-//                .orElseThrow(() -> new EntityNotFoundException("Column with Id " + columnId + "not found"));
-//
-//        Prompt prompt = new GenerateTaskLLMPrompt(taskDescription).getPrompt();
-//        log.info(prompt.toString());
-//
-//        TaskGenerationResponse response = Optional.ofNullable(
-//                chatClient.prompt(prompt)
-//                        .call()
-//                        .entity(TaskGenerationResponse.class)
-//        ).orElseThrow(() -> new AIFailureException(List.of("AI result Parsing ")));
-//        log.info("Raw response: {}", response.getTitle());
-//        log.info("Raw response: {}", response.getDescription());
-//        log.info("Raw response: {}", response.getEstimatedHours());
-//        String rawResponse = chatClient.prompt(prompt).call().content();
-//        log.info("AI raw response: {}", rawResponse);
-//
-//        try {
-//            Task task = Task.builder()
-//                    .title(response.getTitle())
-//                    .description(response.getDescription())
-//                    .position(position)
-//                    .status(TaskStatus.TODO)
-//                    .comments(List.of())
-//                    .labels(Set.of())
-//                    .assignees(List.of())
-//                    .column(boardColumn)
-//                    .build();
-//
-//            taskRepository.save(task);
-//
-//            Estimate estimate = Estimate.builder()
-//                    .estimatedTime(response.getEstimatedHours())
-//                    .task(task)
-//                    .createdAt(LocalDateTime.now())
-//                    .build();
-//
-//            estimateRepository.save(estimate);
-//
-//            return task;
-//        } catch (Exception e) {
-//            throw new RuntimeException("AI task generation failed", e);
-//        }
-//    }
-//
-//    @Override
-//    public List<Task> generateMultipleTasks(String projectDescription, Long columnId, int count) {
-//        BoardColumn boardColumn = boardColumnRepository.findById(columnId)
-//                .orElseThrow(() -> new EntityNotFoundException("Column with Id " + columnId + "not found"));
-//        int firstPosition = getNextPosition(columnId);
-//
-//        Prompt prompt = new GenerateMultipleTasksLLMPrompt(projectDescription, count).getPrompt();
-//        log.info(prompt.toString());
-//
-//        List<TaskGenerationResponse> responses = Optional.ofNullable(
-//                chatClient.prompt(prompt)
-//                        .call()
-//                        .entity(new ParameterizedTypeReference<List<TaskGenerationResponse>>() {
-//                        })
-//        ).orElseThrow(() -> new AIFailureException(List.of("AI result parsing failed")));
-//        log.info("Raw response: {}", responses);
-//
-//        return IntStream.range(0, responses.size())
-//                .mapToObj(i -> {
-//                    TaskGenerationResponse response = responses.get(i);
-//                    Task task = Task.builder()
-//                            .title(response.getTitle())
-//                            .description(response.getDescription())
-//                            .position(firstPosition + i)
-//                            .status(TaskStatus.TODO)
-//                            .column(boardColumn)
-//                            .build();
-//                    taskRepository.save(task);
-//
-//                    Estimate estimate = Estimate.builder()
-//                            .estimatedTime(response.getEstimatedHours())
-//                            .task(task)
-//                            .createdAt(LocalDateTime.now())
-//                            .build();
-//                    estimateRepository.save(estimate);
-//
-//                    return task;
-//                }).toList();
-//    }
-//
-//    private int getNextPosition(Long columnId) {
-//        return taskRepository.countByColumnId(columnId) + 1;
-//    }
-//}

@@ -1,5 +1,8 @@
 package com.hackyeah.hackyeah2025.projects.controllers;
 
+import com.hackyeah.hackyeah2025.ai.ports.AiScheduleGeneratorPort;
+import com.hackyeah.hackyeah2025.exceptions.AIFailureException;
+import com.hackyeah.hackyeah2025.projects.entities.DaySchedule;
 import com.hackyeah.hackyeah2025.projects.entities.Project;
 import com.hackyeah.hackyeah2025.projects.requests.ProjectRequest;
 import com.hackyeah.hackyeah2025.projects.services.ProjectService;
@@ -16,6 +19,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final AiScheduleGeneratorPort aiScheduleGeneratorPort;
 
     @GetMapping("/all/paginated")
     public PaginatedResponse<Project> getProjects(
@@ -54,7 +58,7 @@ public class ProjectController {
     ) {
         return ResponseEntity.ok(projectService.updateProject(id, request));
     }
-    
+
     @PatchMapping("/{id}/add-participant")
     public ResponseEntity<Project> addParticipant(
             @PathVariable Long id,
@@ -69,5 +73,19 @@ public class ProjectController {
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/generate-with-ai")
+    public ResponseEntity<Project> generateProjectWithAI(@RequestBody Project request) {
+        return aiScheduleGeneratorPort.generateScheduleForProjectProject(request)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new AIFailureException(List.of("AI failed to generate a project schedule.")));
+    }
+
+    @PostMapping("/generate-daily-schedule-with-ai")
+    public ResponseEntity<DaySchedule> generateSingleScheduleEntryWithAI(@RequestBody Project request) {
+        return aiScheduleGeneratorPort.generateSingleScheduleEntry(request)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new AIFailureException(List.of("AI failed to generate a daily schedule entry.")));
     }
 }
