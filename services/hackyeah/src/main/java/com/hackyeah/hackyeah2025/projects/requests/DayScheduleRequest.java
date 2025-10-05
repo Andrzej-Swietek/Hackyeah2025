@@ -1,5 +1,7 @@
 package com.hackyeah.hackyeah2025.projects.requests;
 
+import lombok.Builder;
+
 import java.util.Date;
 import java.util.List;
 
