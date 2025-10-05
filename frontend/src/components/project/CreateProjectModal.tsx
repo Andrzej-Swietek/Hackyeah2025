@@ -54,7 +54,7 @@ export const CreateProjectModal: FC<CreateProjectModalProps> = ({ open, onClose,
                 tripType,
                 numberOfEatingBreaks,
                 intensivenessLevel,
-                activeHours: { start: activeHoursStart, end: activeHoursEnd },
+                activeHours: { startHour: activeHoursStart, endHour: activeHoursEnd },
                 tagIds: selectedTagIds,
                 participants: [profile?.id]
             };

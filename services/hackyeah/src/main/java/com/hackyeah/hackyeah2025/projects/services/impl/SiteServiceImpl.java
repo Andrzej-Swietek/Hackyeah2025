@@ -4,6 +4,7 @@ import com.hackyeah.hackyeah2025.projects.entities.Site;
 import com.hackyeah.hackyeah2025.projects.repositories.SiteRepository;
 import com.hackyeah.hackyeah2025.projects.requests.CreateSiteRequest;
 import com.hackyeah.hackyeah2025.projects.services.SiteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class SiteServiceImpl implements SiteService {
     }
 
     @Override
-    public Site createSite(CreateSiteRequest createSiteRequest) {
+    public Site createSite(@Valid CreateSiteRequest createSiteRequest) {
         return siteRepository.save(
                 Site.builder()
                         .name(createSiteRequest.name())
@@ -43,7 +44,7 @@ public class SiteServiceImpl implements SiteService {
     }
 
     @Override
-    public Site updateSite(Long id, CreateSiteRequest site) {
+    public Site updateSite(Long id, @Valid CreateSiteRequest site) {
         Site existingSite = siteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Site not found with id " + id));
 

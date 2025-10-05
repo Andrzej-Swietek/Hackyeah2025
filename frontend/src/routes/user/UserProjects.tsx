@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query';
 import { Project, ProjectControllerApiFactory } from '@/api';
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { MapPin } from "lucide-react";
 
 export const UserProjects: FC = () => {
     const { profile } = useUserProfile();
@@ -37,38 +37,59 @@ export const UserProjects: FC = () => {
     }
 
     return (
-        <div className="w-full max-w-5xl mx-auto py-12 px-4">
+        <div className="w-full max-w-7xl mx-auto py-12 px-4">
             <h1 className="text-3xl font-bold mb-8">Moje projekty</h1>
             {(!projects || projects.length === 0) && (
                 <p className="text-muted-foreground">Nie masz jeszcze żadnych projektów.</p>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {projects?.map((project) => (
-                    <Card
-                        key={project.id}
-                        className="overflow-hidden cursor-pointer hover:shadow-lg transition"
-                        onClick={() => navigate(`/project-editor/${project.id}`)}
-                    >
-                        {/* Obrazek projektu */}
-                        <div className="h-40 bg-gray-200 bg-cover bg-center"
-                             style={{
-                                 backgroundImage: `url(https://picsum.photos/200/300)`
-                             }}
-                        />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {projects?.map((project) => {
+                    const locations = Array.from(
+                        new Set(
+                            project.plan
+                                ?.flatMap(day =>
+                                    day.scheduleEntries?.map(se => se.site?.address?.city).filter(Boolean) || []
+                                ) || []
+                        )
+                    );
 
-                        {/* Treść */}
-                        <div className="p-4">
-                            <h2 className="text-xl font-semibold mb-2">{project.name}</h2>
-                            <p className="text-sm text-muted-foreground line-clamp-3">{project.description}</p>
+                    return (
+                        <Card
+                            key={project.id}
+                            className="overflow-hidden cursor-pointer hover:shadow-lg transition flex flex-col !py-0 relative"
+                            onClick={() => navigate(`/project-editor/${project.id}`)}
+                        >
+                            {/* Obrazek projektu */}
+                            <div
+                                className="h-48 bg-gray-200 bg-cover bg-center w-full"
+                                style={{
+                                    backgroundImage: `url(https://picsum.photos/600/400)`,
+                                }}
+                            />
 
-                            <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
-                                <span>Liczba osób: {project.numberOfTravelers}</span>
-                                <span>Typ: {project.tripType}</span>
+                            {/* Treść karty */}
+                            <div className="p-6 flex flex-col flex-1">
+                                <h2 className="text-xl font-semibold mb-2">{project.name}</h2>
+                                <p className="text-md text-muted-foreground line-clamp-3">{project.description}</p>
+
+                                <div className="mt-auto pt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                                    <span>Liczba osób: {project.numberOfTravelers}</span>
+                                    <span>Typ: {project.tripType}</span>
+                                </div>
                             </div>
-                        </div>
-                    </Card>
-                ))}
+
+                            {locations.length > 0 && (
+                                <div className="absolute bottom-4 right-4 flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-lg px-3 py-1 shadow">
+                                    <MapPin className="h-4 w-4 text-primary" />
+                                    <span className="text-xs text-muted-foreground line-clamp-1">
+                                        {locations.join(", ")}
+                                    </span>
+                                </div>
+                            )}
+                        </Card>
+                    );
+                })}
             </div>
         </div>
     );

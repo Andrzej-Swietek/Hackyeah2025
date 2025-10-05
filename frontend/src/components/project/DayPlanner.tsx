@@ -20,15 +20,34 @@ interface Day {
     activities: Activity[]
 }
 
-export function DayPlanner() {
-    const [days, setDays] = useState<Day[]>([
-        {
-            id: "1",
-            date: "2024-03-15",
-            activities: [],
-        },
-    ])
-    const [activeDay, setActiveDay] = useState("1")
+// export function DayPlanner() {
+//     const [days, setDays] = useState<Day[]>([
+//         {
+//             id: "1",
+//             date: "2024-03-15",
+//             activities: [],
+//         },
+//     ])
+
+export function DayPlanner({
+           initialDays = [],
+           selectedDay,
+           onSelectDay,
+           onSave
+       }: {
+    initialDays?: Day[],
+    selectedDay: string | null,
+    onSelectDay: (id: string) => void,
+    onSave: (days: Day[]) => void
+}) {
+    const [days, setDays] = useState<Day[]>(initialDays.length ? initialDays : [{
+        id: "1",
+        date: new Date().toISOString().substring(0, 10),
+        activities: [],
+    }]);
+
+    const [activeDay, setActiveDay] = useState(days[0]?.id || "1");
+    // const [activeDay, setActiveDay] = useState("1")
 
     const addDay = () => {
         const newDay: Day = {
@@ -207,6 +226,12 @@ export function DayPlanner() {
                         </div>
                     </div>
                 )}
+            </div>
+
+            <div className="border-t border-border p-4 flex justify-end">
+                <Button onClick={() => onSave(days)}>
+                    Save Plan
+                </Button>
             </div>
         </div>
     )

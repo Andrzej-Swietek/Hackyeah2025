@@ -59,11 +59,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'new-project',
-        element: <ProjectEditor createNew={true} />,
+        element: <ProjectEditor key="new" createNew={true} />,
       },
       {
         path: 'project-editor/:projectId',
-        element: <ProjectEditor />,
+        element: <ProjectEditor key="edit" />,
       },
       // { path: 'management/labels', element: <LabelsManagement /> },
     ],

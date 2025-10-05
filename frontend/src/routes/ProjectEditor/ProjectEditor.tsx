@@ -37,10 +37,62 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ createNew = false }) => 
         queryFn: async () => {
             if (!currentProjectId) return undefined;
             const res = await ProjectControllerApiFactory().getProjectById(currentProjectId);
+            console.log(res.data);
             return res.data;
         },
         enabled: !!currentProjectId,
     });
+
+    const mappedDays = projectData?.plan?.map(day => ({
+        id: String(day.id),
+        date: day.date ? new Date(day.date).toISOString().substring(0, 10) : "",
+        activities: day.scheduleEntries?.map(entry => ({
+            id: String(entry.id),
+            time: entry.startDate ? new Date(entry.startDate).toISOString().substring(11, 16) : "",
+            title: entry.site?.name || "",
+            location: entry.site?.address?.city || "",
+            notes: entry.site?.description || "",
+        })) || []
+    })) || [];
+
+    const mappedMarkers: MarkerData[] = projectData?.plan?.flatMap(day =>
+        day.scheduleEntries?.map(entry => ({
+            lat: entry.site?.geolocation?.latitude || 0,
+            lng: entry.site?.geolocation?.longitude || 0,
+            background: "#2563eb",     // np. niebieski
+            borderColor: "#1d4ed8",
+            glyphColor: "#ffffff",
+            name: entry.site?.name || "Site",
+            description: entry.site?.description || "",
+        })) || []
+    ) || [];
+
+    const handleSavePlan = async (days: Day[]) => {
+        if (!projectData) return;
+
+        const updatedProject: Project = {
+            ...projectData,
+            plan: days.map(d => ({
+                id: Number(d.id) || undefined,
+                date: new Date(d.date),
+                scheduleEntries: d.activities.map(a => ({
+                    id: Number(a.id) || undefined,
+                    startDate: new Date(`${d.date}T${a.time}:00`),
+                    site: {
+                        id: a.id,
+                        name: a.title,
+                        description: a.notes,
+                        address: { city: a.location },
+                        geolocation: { latitude: 0, longitude: 0 }
+                    }
+                }))
+            }))
+        };
+
+        await ProjectControllerApiFactory().updateProject(projectData.id!, updatedProject);
+        queryClient.invalidateQueries(['project', projectData.id]);
+    };
+
 
     const [currentSlide, setCurrentSlide] = useState(0);
     const places = [
@@ -54,27 +106,6 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ createNew = false }) => 
         }, 5000);
         return () => clearInterval(interval);
     }, [places.length]);
-
-    const exampleMarkers: MarkerData[] = [
-        {
-            lat: 40.1215,
-            lng: -100.4503,
-            background: '#ff0000',
-            borderColor: '#aa0000',
-            glyphColor: '#ffffff',
-            name: 'Marker 1',
-            description: 'Opis dla markera 1',
-        },
-        {
-            lat: 39.5,
-            lng: -99.0,
-            background: '#00ff00',
-            borderColor: '#006400',
-            glyphColor: '#000000',
-            name: 'Marker 2',
-            description: 'Opis dla markera 2',
-        },
-    ];
 
     return (
         <div className="flex flex-col w-full min-h-[88vh] relative">
@@ -117,16 +148,35 @@ export const ProjectEditor: FC<ProjectEditorProps> = ({ createNew = false }) => 
                 </div>
             </section>
 
-            {!showCreateModal && currentProjectId && (
+            {/*{!showCreateModal && currentProjectId && (*/}
+            {/*    <div className="w-full mx-auto px-8 py-12 grid grid-cols-1 lg:grid-cols-2 gap-8">*/}
+            {/*        <DayPlanner*/}
+            {/*            selectedDay={null}*/}
+            {/*            onSelectDay={() => {}}*/}
+            {/*        />*/}
+            {/*        <MapView*/}
+            {/*            center={{ lat: 40.1215019, lng: -100.4503936 }}*/}
+            {/*            zoom={4}*/}
+            {/*            markers={exampleMarkers}*/}
+            {/*        />*/}
+            {/*    </div>*/}
+            {/*)}*/}
+
+            {!showCreateModal && currentProjectId && projectData && (
                 <div className="w-full mx-auto px-8 py-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <DayPlanner
+                        initialDays={mappedDays}
                         selectedDay={null}
                         onSelectDay={() => {}}
+                        onSave={handleSavePlan}
                     />
                     <MapView
-                        center={{ lat: 40.1215019, lng: -100.4503936 }}
-                        zoom={4}
-                        markers={exampleMarkers}
+                        center={{
+                            lat: mappedMarkers[0]?.lat || 40.0,
+                            lng: mappedMarkers[0]?.lng || -100.0,
+                        }}
+                        zoom={5}
+                        markers={mappedMarkers}
                     />
                 </div>
             )}
