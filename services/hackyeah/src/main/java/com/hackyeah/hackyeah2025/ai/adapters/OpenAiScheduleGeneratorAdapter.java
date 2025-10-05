@@ -6,9 +6,9 @@ import com.hackyeah.hackyeah2025.ai.prompts.GenerateAllProjectScheduleLLMPrompt;
 import com.hackyeah.hackyeah2025.ai.prompts.GenerateDaySchedule;
 import com.hackyeah.hackyeah2025.projects.entities.DaySchedule;
 import com.hackyeah.hackyeah2025.projects.entities.Project;
+import com.hackyeah.hackyeah2025.projects.requests.CreateSiteRequest;
 import com.hackyeah.hackyeah2025.projects.requests.DayScheduleRequest;
 import com.hackyeah.hackyeah2025.projects.requests.ScheduleEntryRequest;
-import com.hackyeah.hackyeah2025.projects.requests.SiteRequest;
 import com.hackyeah.hackyeah2025.projects.services.DayScheduleService;
 import com.hackyeah.hackyeah2025.projects.services.ProjectService;
 import jakarta.persistence.EntityNotFoundException;
@@ -53,7 +53,7 @@ public class OpenAiScheduleGeneratorAdapter implements AiScheduleGeneratorPort {
                     1L, // Accommodation ID - to be set properly later on in the generation  process
                     responseDayScheduleEntries.stream().map(entry ->
                             new ScheduleEntryRequest(
-                                    new SiteRequest(
+                                    new CreateSiteRequest(
                                             entry.getSite().getName(),
                                             entry.getSite().getDescription(),
                                             entry.getSite().getTimeEstimateHours(),
@@ -99,7 +99,7 @@ public class OpenAiScheduleGeneratorAdapter implements AiScheduleGeneratorPort {
                                 1L, // daySchedule.getAccommodation().getId(),
                                 daySchedule.getScheduleEntries().stream().map(entry ->
                                         new ScheduleEntryRequest(
-                                                new SiteRequest(
+                                                new CreateSiteRequest(
                                                         entry.getSite().getName(),
                                                         entry.getSite().getDescription(),
                                                         entry.getSite().getTimeEstimateHours(),
