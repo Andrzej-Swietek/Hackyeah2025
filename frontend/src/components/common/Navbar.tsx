@@ -45,7 +45,7 @@ export const Navbar: FC<NavbarProps> = () => {
                             {t('navbar.explore')}
                         </NavLink>
                         <NavLink
-                            to="/project-editor"
+                            to="/new-project"
                             className="text-md font-medium text-muted-foreground transition-colors hover:text-foreground"
                         >
                             {t('navbar.newProject')}
